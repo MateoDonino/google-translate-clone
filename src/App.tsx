@@ -1,77 +1,81 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Stack,
+  FormText,
+} from "react-bootstrap";
 import "./App.css";
-import { useReducer } from "react";
-import { Action, type State } from "./types";
+import { useStore } from "./hooks/useStore";
+import { AUTO_LANGUAGE } from "./constants";
+import { ArrowsIcon } from "./components/Icons";
+import { LanguageSelector } from "./components/LanguageSelector";
+import { SectionType } from "./types.d";
+import { TextArea } from "./components/TextArea";
 
-// 1. Crear el estado inicial.
-const initialState: State = {
-  fromLenguaje: "auto",
-  toLenguaje: "en",
-  fromText: "",
-  result: "",
-  loading: false,
-};
-
-// 2. Crear el reducer.
-function reducer(state: State, action: Action) {
-  const { type } = action;
-
-  if (type === "INTERCHANGE_LANGUAGES") {
-    return {
-      ...state,
-      fromLenguaje: state.toLenguaje,
-      toLenguaje: state.fromLenguaje,
-    };
-  }
-
-  if (type === "SET_FROM_LANGUAGE") {
-    return {
-      ...state,
-      fromLanguage: action.payload,
-    };
-  }
-
-  if (type === "SET_TO_LANGUAGE") {
-    return {
-      ...state,
-      toLanguage: action.payload,
-    };
-  }
-
-  if (type === "SET_FROM_TEXT") {
-    return {
-      ...state,
-      loading: true,
-      fromText: action.payload,
-      result: "",
-    };
-  }
-
-  if (type === "SET_RESULT") {
-    return {
-      ...state,
-      loading: false,
-      result: action.payload,
-    };
-  }
-
-  return state;
-}
 function App() {
-  // 3. Crear el dispatch, usar el hook useReducer.
-  const [{ fromLenguaje, toLenguaje, fromText, result, loading }, dispatch] =
-    useReducer(reducer, initialState);
+  const {
+    fromLanguage,
+    toLanguage,
+    interchangeLanguages,
+    setFromLanguage,
+    setToLanguage,
+    fromText,
+    result,
+    setFromText,
+    setResult,
+  } = useStore();
   return (
-    <div className="App">
-      <h1>Google Translate</h1>
-      <button
-        onClick={() => {
-          dispatch({ type: "SET_FROM_LANGUAGE", payload: "es" });
-        }}
-      >
-        Cambiar a Español
-      </button>
-    </div>
+    <Container fluid>
+      <h2>Google Translate</h2>
+
+      <Row>
+        <Col>
+          <Stack gap={2}>
+            <LanguageSelector
+              type={SectionType.From}
+              value={fromLanguage}
+              onChange={setFromLanguage}
+            />
+            <TextArea
+              placeholder="Introducir texto"
+              type={SectionType.From}
+              value={fromText}
+              onChange={setFromText}
+            />
+          </Stack>
+        </Col>
+
+        <Col xs="auto">
+          <Button
+            variant="link"
+            disabled={fromLanguage === AUTO_LANGUAGE}
+            onClick={interchangeLanguages}
+          >
+            <ArrowsIcon />
+          </Button>
+        </Col>
+
+        <Col>
+          <Stack gap={2}>
+            <LanguageSelector
+              type={SectionType.To}
+              value={toLanguage}
+              onChange={setToLanguage}
+            />
+            <TextArea
+              placeholder="Traducción"
+              type={SectionType.To}
+              value={result}
+              onChange={setResult}
+            />
+          </Stack>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
