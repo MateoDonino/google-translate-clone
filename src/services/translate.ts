@@ -10,7 +10,7 @@ import { type FromLanguage, type Language } from "../types";
 // ESTO LO HACEMOS PORQUE NOS ESTAMOS ENFOCANDO EN ESTE CURSO
 // EN REACT y TYPESCRIPT
 // DEBES CREAR UNA API PARA ESTO
-const apiKey = "ADflBiXYqFh10O6y0mHtW75v3VaZGt7Q9xTE6M36";
+const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 const configuration = new Configuration({ apiKey });
 const openai = new OpenAIApi(configuration);
